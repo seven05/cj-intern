@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import os
 import time
+# 8-25.py 파일을 한 프레임 당으로 진행 과정을 설명하기 위한 코드
 
 file_name = "frame/6.jpg"
 
@@ -13,7 +14,7 @@ def is_ingame(image):
     image_crop = image[18:35, 23:45].copy() #들어온 이미지를 크롭, 이후에 비율로 맞출 예정
 
     for_imshow = cv2.resize(image_crop, (398, 224))
-    cv2.imshow("bgrExtraction", for_imshow)
+    cv2.imshow("before pretreatment", for_imshow)
     cv2.waitKey()
 
     # BGR로 색추출
@@ -28,6 +29,7 @@ def is_ingame(image):
     # total_pixel_num = h * w
     # ratio = bgrResult_num / total_pixel_num
     # if ratio > 0.185: # 70/374는 대충 0.187
+    print("bgrResult_num is : ", bgrResult_num)
     if bgrResult_num > 70: # 이 부분도 화질이 달라질 것을 고려하면 비율로 하는것이 좋을 듯
         return True
     else:
