@@ -1,8 +1,10 @@
 import numpy as np
 import cv2
 import os
+import time
 
-cap = cv2.VideoCapture('P470472958_EPI0150_01_t35.mp4') # 파일 읽어들이기
+start = time.time()
+cap = cv2.VideoCapture('P470472958_EPI0001_01_t35.mp4') # 파일 읽어들이기
 
 fps = cap.get(cv2.CAP_PROP_FPS)  # 프레임 수 구하기(= 초당 frame 갯수)
 total_frame = cap.get(cv2.CAP_PROP_FRAME_COUNT) # 총 프레임 수
@@ -65,6 +67,8 @@ def whilte_num(image):
     return num
 
 # 시작 지점 찾기
+# 1분마다 6초에 대해 초당 한 프레임 씩 내가 원하는 조건이 되는지 확인
+# 6개의 프레임 중 6개 모두 만족하면 시작이라고 인식
 def find_start(check_frame):
     while(True):
         cnt = 0
@@ -79,14 +83,17 @@ def find_start(check_frame):
             break
 
     cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) - (120 * fps))
-    # print(cap.get(cv2.CAP_PROP_POS_MSEC))
-    ret, frame = cap.read()
-    cv2.imshow("result", frame)
-    cv2.waitKey()
+
+    # ret, frame = cap.read()
+    # cv2.imshow("result", frame)
+    # cv2.waitKey()
     return cap.get(cv2.CAP_PROP_POS_FRAMES)
 
 
 # 끝나는 지점 찾기
+# 인풋 프레임으로부터 45분에 대한 프레임을 더한 후
+# 매 1분마다 20초에 대해 초당 한 프헤임씩 내가 원하는 조건이 되는지 확인
+# 20프레임 중 모두 조건에 만족하면 경기 종료라고 인식
 def find_end(check_frame):
     check_frame += fps * 60 * 45
     while(True):
@@ -100,10 +107,10 @@ def find_end(check_frame):
                 cnt += 1
         if cnt == 0:
             break
-    # print(cap.get(cv2.CAP_PROP_POS_MSEC))
-    ret, frame = cap.read()
-    cv2.imshow("result", frame)
-    cv2.waitKey()
+
+    # ret, frame = cap.read()
+    # cv2.imshow("result", frame)
+    # cv2.waitKey()
     return cap.get(cv2.CAP_PROP_POS_FRAMES)
 
 
@@ -118,3 +125,8 @@ second_half_end = find_end(second_half_start)
 # os.system("ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss") # 덜 작성함 이런 식으로 하면 cmd 명령어(ffmpeg) 사용 가능
 cap.release()
 cv2.destroyAllWindows()
+
+print(time.time() - start)
+# 4.5563271045684814 초 걸림
+# 5.558298826217651 초 걸림
+# 8/25일 10시 기준으로 평균 5초 정도 걸림.
