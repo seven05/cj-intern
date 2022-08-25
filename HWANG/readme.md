@@ -6,6 +6,6 @@
 ## RPPG를 사용한 MTTS-CAN
 ### 일시 중단
 ---
-# TASK3
+# TASK3 - SOCCER DIRECTORY
 ## 축구 영상 전, 후반을 분리
 ### 
