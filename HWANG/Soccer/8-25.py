@@ -117,16 +117,34 @@ def find_end(check_frame):
 now = cap.get(cv2.CAP_PROP_POS_FRAMES) # 현재 프레임
 first_half_start_frame = find_start(now)
 first_half_end_frame = find_end(first_half_start_frame)
-second_half_start = find_start(first_half_end_frame)
-second_half_end = find_end(second_half_start)
+second_half_start_frame = find_start(first_half_end_frame)
+second_half_end_frame = find_end(second_half_start_frame)
 
-
+print(first_half_start_frame)
+print(first_half_end_frame)
+print(second_half_start_frame)
+print(second_half_end_frame)
+first_half_start_time = first_half_start_frame / fps
+first_half_end_time = first_half_end_frame / fps
+second_half_start_time = second_half_start_frame / fps
+second_half_end_time = second_half_end_frame / fps
+print("-------------------------------------")
+print(first_half_start_time)
+print(first_half_end_time)
+print(second_half_start_time)
+print(second_half_end_time)
 
 # os.system("ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss") # 덜 작성함 이런 식으로 하면 cmd 명령어(ffmpeg) 사용 가능
 cap.release()
 cv2.destroyAllWindows()
-
 print(time.time() - start)
 # 4.5563271045684814 초 걸림
 # 5.558298826217651 초 걸림
-# 8/25일 10시 기준으로 평균 5초 정도 걸림.
+# 8/25일 10시 기준으로 평균 5초 정도 걸림
+
+# 빨간줄을 로그로 뱉지만 
+result_1 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(first_half_start_time) + " -t " + str(first_half_end_time) + " -vcodec copy -acodec copy before_half.mp4"
+os.system(result_1)
+result_2 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(second_half_start_time) + " -t " + str(second_half_end_time) + " -vcodec copy -acodec copy after_half.mp4"
+os.system(result_2)
+# os.system("type temp.txt") # temp.txt를 출력함..
