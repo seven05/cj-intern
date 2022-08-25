@@ -4,7 +4,8 @@ import os
 import time
 
 start = time.time()
-cap = cv2.VideoCapture('P470472958_EPI0001_01_t35.mp4') # 파일 읽어들이기
+file_name = "P470472958_EPI0001_01_t35.mp4"
+cap = cv2.VideoCapture(file_name) # 파일 읽어들이기
 
 fps = cap.get(cv2.CAP_PROP_FPS)  # 프레임 수 구하기(= 초당 frame 갯수)
 total_frame = cap.get(cv2.CAP_PROP_FRAME_COUNT) # 총 프레임 수
@@ -38,11 +39,11 @@ def is_ingame(image):
     # 총 하얀점 갯수가 몇개인지 계산
     bgrResult_num = whilte_num(bgrResult)
     # 비율 버전
-    h,w,c = image_crop.shape
-    total_pixel_num = h * w
-    ratio = bgrResult_num / total_pixel_num
-    if ratio > 0.185: # 70/374는 대충 0.187
-    # if bgrResult_num > 70: # 이 부분도 화질이 달라질 것을 고려하면 비율로 하는것이 좋을 듯
+    # h,w,c = image_crop.shape
+    # total_pixel_num = h * w
+    # ratio = bgrResult_num / total_pixel_num
+    # if ratio > 0.185: # 70/374는 대충 0.187
+    if bgrResult_num > 70: # 이 부분도 화질이 달라질 것을 고려하면 비율로 하는것이 좋을 듯
         return True
     else:
         return False
@@ -73,7 +74,7 @@ def find_start(check_frame):
     while(True):
         cnt = 0
         check_frame += 60 * fps
-        for i in range(0,6):
+        for i in range(0, 6):
             temp = check_frame + i * fps
             cap.set(cv2.CAP_PROP_POS_FRAMES, temp)
             ret, frame = cap.read()
@@ -99,7 +100,7 @@ def find_end(check_frame):
     while(True):
         cnt = 0
         check_frame += 60 * fps
-        for i in range(0, 20):
+        for i in range(0, 10):
             temp = check_frame + i * fps
             cap.set(cv2.CAP_PROP_POS_FRAMES, temp)
             ret, frame = cap.read()
@@ -108,9 +109,9 @@ def find_end(check_frame):
         if cnt == 0:
             break
 
-    # ret, frame = cap.read()
-    # cv2.imshow("result", frame)
-    # cv2.waitKey()
+    ret, frame = cap.read()
+    cv2.imshow("result", frame)
+    cv2.waitKey()
     return cap.get(cv2.CAP_PROP_POS_FRAMES)
 
 
@@ -141,10 +142,8 @@ print(time.time() - start)
 # 4.5563271045684814 초 걸림
 # 5.558298826217651 초 걸림
 # 8/25일 10시 기준으로 평균 5초 정도 걸림
-
-# 빨간줄을 로그로 뱉지만 영상은 생성
-result_1 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(first_half_start_time) + " -t " + str(first_half_end_time) + " -vcodec copy -acodec copy before_half.mp4"
+result_1 = "ffmpeg -i " + file_name + " -ss " + str(first_half_start_time) + " -t " + str(first_half_end_time - first_half_start_time) + " -vcodec copy -acodec copy before_half.mp4"
 os.system(result_1)
-result_2 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(second_half_start_time) + " -t " + str(second_half_end_time) + " -vcodec copy -acodec copy after_half.mp4"
+result_2 = "ffmpeg -i " + file_name + " -ss " + str(second_half_start_time) + " -t " + str(second_half_end_time - second_half_start_time) + " -vcodec copy -acodec copy after_half.mp4"
 os.system(result_2)
 # os.system("type temp.txt") # temp.txt를 출력함..
