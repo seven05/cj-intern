@@ -142,7 +142,7 @@ print(time.time() - start)
 # 5.558298826217651 초 걸림
 # 8/25일 10시 기준으로 평균 5초 정도 걸림
 
-# 빨간줄을 로그로 뱉지만 
+# 빨간줄을 로그로 뱉지만 영상은 생성
 result_1 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(first_half_start_time) + " -t " + str(first_half_end_time) + " -vcodec copy -acodec copy before_half.mp4"
 os.system(result_1)
 result_2 = "ffmpeg -i P470472958_EPI0001_01_t35.mp4 -ss " + str(second_half_start_time) + " -t " + str(second_half_end_time) + " -vcodec copy -acodec copy after_half.mp4"
