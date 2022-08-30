@@ -10,4 +10,8 @@ compare.py 함수를 실행시키면
 
 전반전은 넘지않게, 후반전은 넘어야지만 되므로
 first_start_diff, second_start_diff의 경우 음수가 떠야 맞는 것이고
-first_end_diff, second_end_diff의 경우 양수가 떠야 맞는 것이다.
+first_end_diff, second_end_diff의 경우 양수가 떠야 맞는 정답.
+
+
+compare.py의 변수중 for_for_loop를 사용하면 모든 동영상을 체크
+small_input을 사용하면 1, 2, 3번만 사용하여 체크.
