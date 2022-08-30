@@ -1,4 +1,4 @@
-compare.py 함수를 실행시키면
+compare.py 함수를 실행시키면 (단, 가장 최근의 version으로 time_module을 import해야함)
 
 
 |index|file_name|first_start_diff|first_end_diff|second_start_diff|second_end_diff|time|
