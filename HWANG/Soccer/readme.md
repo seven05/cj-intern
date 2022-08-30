@@ -15,3 +15,6 @@ first_end_diff, second_end_diff의 경우 양수가 떠야 맞는 정답.
 
 compare.py의 변수중 for_for_loop를 사용하면 모든 동영상을 체크
 small_input을 사용하면 1, 2, 3번만 사용하여 체크.
+
+그 결과물은 result.csv
+5번 영상은 잡질 못해 제외함.
