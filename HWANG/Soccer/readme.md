@@ -19,4 +19,4 @@ small_input을 사용하면 1, 2, 3번만 사용하여 체크.
 그 결과물은 result.csv
 5번 영상은 잡질 못해 제외함.
 
-### predict1.csv, result1.csv가 v2에 대한 결과입니다 !!
+### predict1.csv, result1.csv가 v2에 대한 결과입니다 !! <- 가장 최근
