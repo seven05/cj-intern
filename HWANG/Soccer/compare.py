@@ -5,26 +5,27 @@ import pandas as pd
 from pandas import json_normalize
 
 # 5는 제외
-for_for_loop = ["001", "002", "003", "004", "006", "007", "008", "009", "010",
-                "011", "012", "013", "014", "015", "016", "017", "018", "019", "020",
-                "021", "022", "023", "024", "025", "026", "027", "028", "029", "030",
-                "031", "032", "033", "034", "035", "036", "037", "038", "039", "040",
-                "041", "042", "043", "044", "045", "046", "047", "048", "049", "050",
-                "051", "052", "053", "054", "055", "056", "057", "058", "059", "060",
-                "061", "062", "063", "064", "065", "066", "067", "068", "069", "070",
-                "071", "072", "073", "074", "075", "076", "077", "078", "079", "080",
-                "081", "082", "083", "084", "085", "086", "087", "088", "089", "090",
-                "091", "092", "093", "094", "095", "096", "097", "098", "099", "100",
-                "101", "102", "103", "104", "105", "106", "107", "108", "109", "110",
-                "111", "112", "113", "114", "115", "116", "117", "118", "119", "120",
-                "121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
-                "131", "132", "133", "134", "135", "136", "137", "138", "139", "140",
-                "141", "142", "143", "144", "145", "146", "147", "148", "149", "150"]
+for_for_loop_1 = ["001", "002", "003", "004", "006", "007", "008", "009", "010",
+                  "011", "012", "013", "014", "015", "016", "017", "018", "019", "020",
+                  "021", "022", "023", "024", "025", "026", "027", "028", "029", "030"]
+for_for_loop_2 = ["031", "032", "033", "034", "035", "036", "037", "038", "039", "040",
+                  "041", "042", "043", "044", "045", "046", "047", "048", "049", "050",
+                  "051", "052", "053", "054", "055", "056", "057", "058", "059", "060"]
+for_for_loop_3 = ["061", "062", "063", "064", "065", "066", "067", "068", "069", "070",
+                  "071", "072", "073", "074", "075", "076", "077", "078", "079", "080",
+                  "081", "082", "083", "084", "085", "086", "087", "088", "089", "090"]
+for_for_loop_4 = ["091", "092", "093", "094", "095", "096", "097", "098", "099", "100",
+                  "101", "102", "103", "104", "105", "106", "107", "108", "109", "110",
+                  "111", "112", "113", "114", "115", "116", "117", "118", "119", "120"]
+for_for_loop_5 = ["121", "122", "123", "124", "125", "126", "127", "128", "129", "130",
+                  "131", "132", "133", "134", "135", "136", "137", "138", "139", "140",
+                  "141", "142", "143", "144", "145", "146", "147", "148", "149", "150"]
 small_input = ["001", "002", "003"]
 
 columns = ["file_name", "first_start_diff", "first_end_diff", "second_start_diff", "second_end_diff", "time"]
-df = pd.DataFrame(columns=columns)
-# print(df)
+df_diff = pd.DataFrame(columns=columns)
+columns_predict = ["file_name", "first_start", "first_end", "second_start", "second_end", "time"]
+df_predict = pd.DataFrame(columns=columns_predict)
 
 
 def read_json(file_name):
@@ -54,18 +55,37 @@ def read_json(file_name):
 input_mp4 = "tving_video_224/P470472958_EPI0"
 input_json = "episode_json/EP"
 count = 0
-for i in small_input:
+for i in for_for_loop_1:
     file_name_mp4 = input_mp4 + str(i) + "_01_t35.mp4"
     file_name_json = input_json + str(i) + ".json"
-
+    print("now is going on ", i)
     a_gt, b_gt, c_gt, d_gt = read_json(file_name_json) # x_gt가 모두 int형으로 바꿔어서 받음.
 
+    a, b, c, d = 0, 0, 0, 0
     start = time.time()
-    a, b, c, d = time_module.main(file_name_mp4)
+    try:
+        a, b, c, d = time_module.main(file_name_mp4)
+    except:
+        print("ERROR IN TIME_MODULE.MAIN")
     end = time.time()
+
     file_name = "EP" + i
-    df.loc[count] = [file_name, a - a_gt, b - b_gt, c - c_gt, d - d_gt, end-start]
+    df_diff.loc[count] = [file_name, a - a_gt, b - b_gt, c - c_gt, d - d_gt, end-start]
+    df_predict.loc[count] = [file_name, a, b, c, d, end-start]
     count += 1
 
-df.to_csv("result.csv", mode= "w")
-print(df)
+df_diff.to_csv("result1.csv", mode= "w")
+df_predict.to_csv("predict1.csv", mode="w")
+
+# df_diff.to_csv("result2.csv", mode= "w")
+# df_predict.to_csv("predict2.csv", mode="w")
+#
+# df_diff.to_csv("result3.csv", mode= "w")
+# df_predict.to_csv("predict3.csv", mode="w")
+#
+# df_diff.to_csv("result4.csv", mode= "w")
+# df_predict.to_csv("predict4.csv", mode="w")
+#
+# df_diff.to_csv("result5.csv", mode= "w")
+# df_predict.to_csv("predict5.csv", mode="w")
+
