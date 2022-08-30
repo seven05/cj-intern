@@ -3,32 +3,6 @@ import cv2
 import os
 import time
 
-
-def main(input):
-    file_name = input
-    cap = cv2.VideoCapture(file_name)  # 파일 읽어들이기
-
-    fps = cap.get(cv2.CAP_PROP_FPS)  # 프레임 수 구하기(= 초당 frame 갯수)
-
-    now = cap.get(cv2.CAP_PROP_POS_FRAMES) # 현재 프레임
-    first_half_start_frame = find_start(now)
-    first_half_end_frame = find_end(first_half_start_frame)
-    start_frame = first_half_end_frame + fps * 60 * 2
-    second_half_start_frame = find_start(start_frame)
-    second_half_end_frame = find_end(second_half_start_frame)
-
-
-    first_half_start_time = first_half_start_frame / fps
-    first_half_end_time = first_half_end_frame / fps
-    second_half_start_time = second_half_start_frame / fps
-    second_half_end_time = second_half_end_frame / fps
-
-
-    cap.release()
-    cv2.destroyAllWindows()
-    return first_half_start_time, first_half_end_time, second_half_start_time, second_half_end_time
-
-
 # img를 받아 RGB를 이용한 색 추출(하얀색 배경을 제외하면 검은색으로 표시)
 # 출처 : https://engineer-mole.tistory.com/236
 # 이후 이중 for 문을 돌며 white가 얼마나 많은지 확인(로고와 비슷한지 확인하기 위해)
@@ -71,11 +45,17 @@ def whilte_num(image):
                 num += 1
     return num
 
-# 시작 지점 찾기
-# 1분마다 6초에 대해 초당 한 프레임 씩 내가 원하는 조건이 되는지 확인
-# 6개의 프레임 중 6개 모두 만족하면 시작이라고 인식
-def find_start(check_frame):
-    while(True):
+
+def main(input):
+    file_name = input
+    cap = cv2.VideoCapture(file_name)  # 파일 읽어들이기
+    if not cap.isOpened():
+        print("asdasdasdasdasdadssad")
+        return 1,2,3,4
+    fps = cap.get(cv2.CAP_PROP_FPS)  # 프레임 수 구하기(= 초당 frame 갯수)
+    # 전반 시작 찾기
+    check_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+    while True:
         cnt = 0
         check_frame += 5 * fps
         for i in range(0, 3):
@@ -88,18 +68,13 @@ def find_start(check_frame):
             cap.set(cv2.CAP_PROP_POS_FRAMES, check_frame)
             break
 
-    cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) - (20 * fps))
-#    cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES))
-    return cap.get(cv2.CAP_PROP_POS_FRAMES)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) - (30 * fps))
 
-
-# 끝나는 지점 찾기
-# 인풋 프레임으로부터 45분에 대한 프레임을 더한 후
-# 매 1분마다 20초에 대해 초당 한 프헤임씩 내가 원하는 조건이 되는지 확인
-# 20프레임 중 모두 조건에 만족하면 경기 종료라고 인식
-def find_end(check_frame):
+    first_half_start_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+    # 전반 종료 찾기
+    check_frame = first_half_start_frame
     check_frame += fps * 60 * 45
-    while(True):
+    while True:
         cnt = 0
         check_frame += 10 * fps
         for i in range(0, 10):
@@ -111,7 +86,60 @@ def find_end(check_frame):
         if cnt == 0:
             break
 
-    # ret, frame = cap.read()
-    # cv2.imshow("result", frame)
-    # cv2.waitKey()
-    return cap.get(cv2.CAP_PROP_POS_FRAMES)
+    first_half_end_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+
+    # 후반 시작 찾기
+    start_frame = first_half_end_frame + fps * 60 * 2
+    check_frame = start_frame
+    while True:
+        cnt = 0
+        check_frame += 5 * fps
+        for i in range(0, 3):
+            temp = check_frame + i * fps
+            cap.set(cv2.CAP_PROP_POS_FRAMES, temp)
+            ret, frame = cap.read()
+            if is_ingame(frame):
+                cnt += 1
+        if cnt == 3:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, check_frame)
+            break
+
+    cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) - (30 * fps))
+
+    second_half_start_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+
+    # 후반 종료 찾기
+    check_frame = second_half_start_frame
+    check_frame += fps * 60 * 45
+    while True:
+        cnt = 0
+        check_frame += 10 * fps
+        for i in range(0, 10):
+            temp = check_frame + i * fps
+            cap.set(cv2.CAP_PROP_POS_FRAMES, temp)
+            ret, frame = cap.read()
+            if is_ingame(frame):
+                cnt += 1
+        if cnt == 0:
+            break
+
+    second_half_end_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+
+
+
+    first_half_start_time = first_half_start_frame / fps
+    first_half_end_time = first_half_end_frame / fps
+    second_half_start_time = second_half_start_frame / fps
+    second_half_end_time = second_half_end_frame / fps
+
+
+    cap.release()
+    cv2.destroyAllWindows()
+    return round(first_half_start_time), round(first_half_end_time), round(second_half_start_time), round(second_half_end_time)
+
+# input  = "tving_video_224/P470472958_EPI0008_01_t35.mp4"
+# a, b, c, d = main(input)
+# result_1 = "ffmpeg -i " + "tving_video_224/P470472958_EPI0008_01_t35.mp4" + " -ss " + str(a) + " -t " + str(b - a) + " -vcodec copy -acodec copy before_half.mp4"
+# os.system(result_1)
+# result_2 = "ffmpeg -i " + "tving_video_224/P470472958_EPI0008_01_t35.mp4" + " -ss " + str(c) + " -t " + str(d - c) + " -vcodec copy -acodec copy after_half.mp4"
+# os.system(result_2)
