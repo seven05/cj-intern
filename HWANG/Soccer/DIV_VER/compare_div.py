@@ -1,5 +1,5 @@
 import time
-import time_module_crop as time_module
+import time_module_div as time_module
 import json
 import pandas as pd
 from pandas import json_normalize
@@ -70,6 +70,7 @@ def read_json(file_name):
 input_mp4 = "tving_video_224/P470472958_EPI0"
 input_json = "episode_json/EP"
 count = 0
+# for문을 돌릴 때 원하는 걸 사용하면 됨.
 for i in titles:
     file_name_mp4 = input_mp4 + str(i) + "_01_t35.mp4"
     file_name_json = input_json + str(i) + ".json"
