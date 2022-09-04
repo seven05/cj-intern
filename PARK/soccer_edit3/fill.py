@@ -57,25 +57,25 @@ def edge_cut(img):
         status = 0
         return x_min,y_min,x_max,y_max
 
-for n in range(2020,2021):
+for n in range(1500,6400):
     for i in range(0,4):
-        if(os.path.isfile("number/%d_num_%d.jpg" %(n,i)) == False):
+        if(os.path.isfile("contours/%d_num_%d.jpg" %(n,i)) == False):
             continue
-        img = cv2.imread('number/%d_num_%d.jpg' %(n,i), cv2.IMREAD_GRAYSCALE)
+        img = cv2.imread('contours/%d_num_%d.jpg' %(n,i), cv2.IMREAD_GRAYSCALE)
         h, w = img.shape
         if(img[0][0] > 128 and img[h-1][0] > 128 and img[0][w-1] > 128 and img[h-1][w-1] > 128):
             img_thr = cv2.threshold(img, 128, 0, cv2.THRESH_BINARY)[1]
         else:
             img_thr = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY)[1]
 
-        for j in range(0,w):
-            print(img_thr[0][j])
+        # for j in range(0,w):
+        #     print(img_thr[2][j])
 
         x_min,y_min,x_max,y_max = edge_cut(img_thr)
-        print(x_min,y_min,x_max,y_max)
+        #print(x_min,y_min,x_max,y_max)
 
         if(x_min == x_max or y_min == y_max):
             continue
         img_edge_cut = img_thr[y_min:y_max,x_min:x_max]
-        cv2.imwrite('fill/%d_%d.jpg' %(x,i), img_edge_cut)       
+        cv2.imwrite('fill/%d_%d.jpg' %(n,i), img_edge_cut)       
 exit()

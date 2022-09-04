@@ -1,6 +1,7 @@
 import time
 import cv2
 import numpy as np
+import os
 
 def histogram(filepath):
     #print(filepath)
@@ -38,13 +39,18 @@ hist_num9 = histogram("number/9.jpg")
 #start = time.time()
 test = []
 
-for x in range(1500,1501):
+for x in range(1500,6400):
+    if(os.path.isfile("resize/%d_0.jpg" %(x)) == False):
+            continue
     tmp = []
-    min1_hist = histogram('Crop2\%d_0.jpg'%x)
-    min2_hist = histogram('Crop2\%d_1.jpg'%x)
-    sec1_hist = histogram('Crop2\%d_2.jpg'%x)
-    sec2_hist = histogram('Crop2\%d_3.jpg'%x)
+    min1_hist = histogram('resize\%d_0.jpg'%x)
+    min2_hist = histogram('resize\%d_1.jpg'%x)
+    sec1_hist = histogram('resize\%d_2.jpg'%x)
+    sec2_hist = histogram('resize\%d_3.jpg'%x)
     hist_gap1 = []
+    hist_gap2 = []
+    hist_gap3 = []
+    hist_gap4 = []
     for i in range(0,10):
         temp1 = [abs(globals()[f'hist_num{i}'][j] - min1_hist[j]) for j in range(len(min1_hist))]
         temp2 = [abs(globals()[f'hist_num{i}'][j] - min2_hist[j]) for j in range(len(min2_hist))]
@@ -63,23 +69,23 @@ for x in range(1500,1501):
     min2 = np.argmin(hist_gap2)
     sec1 = np.argmin(hist_gap3)
     sec2 = np.argmin(hist_gap4)
-    print(hist_gap1)
-    print(hist_gap2)
-    print(hist_gap3)
-    print(hist_gap4)
-    if(hist_gap1[min1] < 70):
+    # print(hist_gap1)
+    # print(hist_gap2)
+    # print(hist_gap3)
+    # print(hist_gap4)
+    if(hist_gap1[min1] < 600):
         tmp.append(min1)
     else:
         tmp.append(10)
-    if(hist_gap2[min2] < 70):
+    if(hist_gap2[min2] < 600):
         tmp.append(min2)
     else:
         tmp.append(10)
-    if(hist_gap3[sec1] < 70):
+    if(hist_gap3[sec1] < 600):
         tmp.append(sec1)
     else:
         tmp.append(10)
-    if(hist_gap4[sec2] < 70):
+    if(hist_gap4[sec2] < 600):
         tmp.append(sec2)
     else:
         tmp.append(10)
