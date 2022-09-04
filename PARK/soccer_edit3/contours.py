@@ -15,10 +15,10 @@ MAX_HEIGHT_DIFF = 0.15
 MIN_N_MATCHED = 4
 
 try:
-    if not os.path.exists('./number'):
-        os.makedirs('./number')
+    if not os.path.exists('./contours'):
+        os.makedirs('./contours')
 except OSError:
-    print('error : creating dir number')
+    print('error : creating dir contours')
 
 file_path = input("파일 이름을 입력해주세요: ")
 cap = cv2.VideoCapture("Video/"+file_path)
@@ -215,4 +215,4 @@ for t in range(1500,6400):
         y = number_list[i][1]
         w = number_list[i][2]
         h = number_list[i][3]
-        cv2.imwrite('./number' + "/%d_num_%d.jpg" %(t,i), img_crop[y:y+h,x:x+w])
+        cv2.imwrite('./contours' + "/%d_num_%d.jpg" %(t,i), img_crop[y:y+h,x:x+w])
