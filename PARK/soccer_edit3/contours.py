@@ -21,7 +21,7 @@ except OSError:
     print('error : creating dir number')
 
 file_path = input("파일 이름을 입력해주세요: ")
-cap = cv2.VideoCapture(file_path)
+cap = cv2.VideoCapture("Video/"+file_path)
 if not cap.isOpened():
     print("Could not Open :", file_path)
     exit(0)
