@@ -1,5 +1,4 @@
 import os
-from platform import win32_edition
 import cv2
 import time
 import numpy as np
