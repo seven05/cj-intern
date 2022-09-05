@@ -82,7 +82,7 @@ def find_chars(contour_list):
             
         return matched_result_idx
 
-for t in range(1500,6400):
+for t in range(6400,6800):
     target = t*fps
     cap.set(cv2.CAP_PROP_POS_FRAMES,target)
     ret, img = cap.read()
@@ -203,7 +203,7 @@ for t in range(1500,6400):
     # print(len(number_list))
     # print(matched_result)
 
-    if(len(number_list) != 4):
+    if(len(number_list) < 4):
         continue
     
     number_list.sort(key=lambda x:x[0])

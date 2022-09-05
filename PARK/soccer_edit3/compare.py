@@ -39,7 +39,7 @@ hist_num9 = histogram("number/9.jpg")
 #start = time.time()
 test = []
 
-for x in range(1500,6400):
+for x in range(6511,6750):
     if(os.path.isfile("resize/%d_0.jpg" %(x)) == False):
             continue
     tmp = []
@@ -73,19 +73,19 @@ for x in range(1500,6400):
     # print(hist_gap2)
     # print(hist_gap3)
     # print(hist_gap4)
-    if(hist_gap1[min1] < 600):
+    if(hist_gap1[min1] < 1000):
         tmp.append(min1)
     else:
         tmp.append(10)
-    if(hist_gap2[min2] < 600):
+    if(hist_gap2[min2] < 1000):
         tmp.append(min2)
     else:
         tmp.append(10)
-    if(hist_gap3[sec1] < 600):
+    if(hist_gap3[sec1] < 1000):
         tmp.append(sec1)
     else:
         tmp.append(10)
-    if(hist_gap4[sec2] < 600):
+    if(hist_gap4[sec2] < 1000):
         tmp.append(sec2)
     else:
         tmp.append(10)

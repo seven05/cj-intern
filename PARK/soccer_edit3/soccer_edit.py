@@ -2,6 +2,7 @@ import cv2
 import os
 import time
 import numpy as np
+from scipy import stats
 
 file_path = input("파일 이름을 입력해주세요: ")
 start = time.time()
@@ -16,9 +17,8 @@ fps = round(fps)
 frame = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 duration = frame/fps
 
-def histogram(filepath):
+def histogram(img):
     #print(filepath)
-    img = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
     rows,cols = img.shape
     x_hist = np.zeros(rows)
     y_hist = np.zeros(cols)
@@ -38,16 +38,16 @@ def histogram(filepath):
     hist = np.concatenate((x_hist,y_hist))
     return hist
 
-hist_num0 = histogram("number/0.jpg")
-hist_num1 = histogram("number/1.jpg")
-hist_num2 = histogram("number/2.jpg")
-hist_num3 = histogram("number/3.jpg")
-hist_num4 = histogram("number/4.jpg")
-hist_num5 = histogram("number/5.jpg")
-hist_num6 = histogram("number/6.jpg")
-hist_num7 = histogram("number/7.jpg")
-hist_num8 = histogram("number/8.jpg")
-hist_num9 = histogram("number/9.jpg")
+hist_num0 = histogram(cv2.imread("number/0.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num1 = histogram(cv2.imread("number/1.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num2 = histogram(cv2.imread("number/2.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num3 = histogram(cv2.imread("number/3.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num4 = histogram(cv2.imread("number/4.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num5 = histogram(cv2.imread("number/5.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num6 = histogram(cv2.imread("number/6.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num7 = histogram(cv2.imread("number/7.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num8 = histogram(cv2.imread("number/8.jpg",cv2.IMREAD_GRAYSCALE))
+hist_num9 = histogram(cv2.imread("number/9.jpg",cv2.IMREAD_GRAYSCALE))
 
 MIN_AREA, MAX_AREA = 200,500
 MIN_WIDTH, MIN_HEIGHT = 0.5, 3
@@ -61,7 +61,6 @@ MIN_N_MATCHED = 4
 
 def find_chars(contour_list):
         matched_result_idx = []
-        
         for d1 in contour_list:
             matched_contours_idx = []
             for d2 in contour_list:
@@ -120,8 +119,8 @@ def edge_cut(img):
                     x_min = x
                     status = 1
                     break
-                if (status == 1):
-                    break
+            if (status == 1):
+                break
         status = 0
 
         for y in reversed(range(cols)):
@@ -131,8 +130,8 @@ def edge_cut(img):
                     y_max = y
                     status = 1
                     break
-                if (status == 1):
-                    break
+            if (status == 1):
+                break
         status = 0
 
         for y in range(0,cols):
@@ -141,8 +140,8 @@ def edge_cut(img):
                     y_min = y
                     status = 1
                     break
-                if (status == 1):
-                    break
+            if (status == 1):
+                break
         status = 0
 
         for x in reversed(range(rows)):
@@ -154,8 +153,8 @@ def edge_cut(img):
                         x_max = x
                     status = 1
                     break
-                if (status == 1):
-                    break
+            if (status == 1):
+                break
         status = 0
         return x_min,y_min,x_max,y_max
 
@@ -198,6 +197,7 @@ def num_detection(target):
             'cx': x + (w / 2),
             'cy': y + (h / 2)
         })
+    global possible_contours
     possible_contours = []
     cnt = 0
     for d in contours_dict:
@@ -233,27 +233,29 @@ def num_detection(target):
             temp.append(d['w'])
             temp.append(d['h'])
             number_list.append(temp)
-    if(len(number_list) != 4):
+    if(len(number_list) < 4):
         state = False
         return state, 0
     number_list.sort(key=lambda x:x[0])
-    for i in range(len(number_list)):
+    for i in range(4):
         x = number_list[i][0]
         y = number_list[i][1]
         w = number_list[i][2]
         h = number_list[i][3]
         globals()[f'crop_num{i}'] = img_crop[y:y+h,x:x+w]
     for i in range(0,4):
-        h, w = globals()[f'crop_num{i}'].shape
-        if(globals()[f'crop_num{i}'][0][0] > 128 and globals()[f'crop_num{i}'][h-1][0] > 128 and globals()[f'crop_num{i}'][0][w-1] > 128 and globals()[f'crop_num{i}'][h-1][w-1] > 128):
-            globals()[f'thr_num{i}'] = cv2.threshold(globals()[f'crop_num{i}'], 128, 0, cv2.THRESH_BINARY)[1]
+        img_crop_num = globals()[f'crop_num{i}']
+        img_crop_num_gray = cv2.cvtColor(img_crop_num, cv2.COLOR_BGR2GRAY)
+        h,w = img_crop_num_gray.shape
+        if(img_crop_num_gray[0][0] > 128 and img_crop_num_gray[h-1][0] > 128 and img_crop_num_gray[0][w-1] > 128 and img_crop_num_gray[h-1][w-1] > 128):
+            globals()[f'thr_num{i}'] = cv2.threshold(img_crop_num_gray, 128, 255, cv2.THRESH_BINARY_INV)[1]
         else:
-            globals()[f'thr_num{i}'] = cv2.threshold(globals()[f'crop_num{i}'], 128, 255, cv2.THRESH_BINARY)[1]
-        x_min,y_min,x_max,y_max = edge_cut(f'thr_num{i}')
+            globals()[f'thr_num{i}'] = cv2.threshold(img_crop_num_gray, 128, 255, cv2.THRESH_BINARY)[1]
+        x_min,y_min,x_max,y_max = edge_cut(globals()[f'thr_num{i}'])
         if(x_min == x_max or y_min == y_max):
-            state = False
-            return state, 0
-        globals()[f'edge_cut_num{i}'] = globals()[f'thr_num{i}'][y_min:y_max,x_min:x_max]
+            globals()[f'edge_cut_num{i}'] = globals()[f'thr_num{i}']
+        else:
+            globals()[f'edge_cut_num{i}'] = globals()[f'thr_num{i}'][y_min:y_max,x_min:x_max]
         globals()[f'resize_num{i}'] = cv2.resize(globals()[f'edge_cut_num{i}'],dsize=(48,48))
     min1_hist = histogram(globals()['resize_num0'])
     min2_hist = histogram(globals()['resize_num1'])
@@ -281,19 +283,19 @@ def num_detection(target):
     min2 = np.argmin(hist_gap2)
     sec1 = np.argmin(hist_gap3)
     sec2 = np.argmin(hist_gap4)
-    if(hist_gap1[min1] < 600):
+    if(hist_gap1[min1] < 1000):
         board_num.append(min1)
     else:
         board_num.append(10)
-    if(hist_gap2[min2] < 600):
+    if(hist_gap2[min2] < 1000):
         board_num.append(min2)
     else:
         board_num.append(10)
-    if(hist_gap3[sec1] < 600):
+    if(hist_gap3[sec1] < 1000):
         board_num.append(sec1)
     else:
         board_num.append(10)
-    if(hist_gap4[sec2] < 600):
+    if(hist_gap4[sec2] < 1000):
         board_num.append(sec2)
     else:
         board_num.append(10)
@@ -309,7 +311,7 @@ def num_detection(target):
     board_num = []
     return state, time
 
-t = 1000
+t = 1500
 iter_count = 0
 time_count = 0
 first_time = []
@@ -321,17 +323,19 @@ while(time_count < 5):
         first_time.append(board_time)
     t += 5
     iter_count += 1
-first_start = (t - int(iter_count*5/2)) - stats.trim_mean(first_time,0.25)-2.5
+first_start = (t - int(iter_count*2.5)) - stats.trim_mean(first_time,0.25)-5
 print("Firsthalf_start: ",first_start)
 t = first_start + 45*60
 fail_count = 0
-while(fail_count < 4):
+while(fail_count < 30):
     target = t*fps
     state,board_time = num_detection(target)
     if(state == False):
         fail_count += 1
-    t += 5
-first_end = t - 17.5
+    if(state == True):
+        fail_count = 0
+    t += 2
+first_end = t - fail_count*2
 print("Firsthalf_end: ", first_end)
 t = first_end + 10*60
 iter_count = 0
@@ -345,17 +349,19 @@ while(time_count < 5):
         second_time.append(board_time)
     t += 5
     iter_count += 1
-second_start = (t - int(iter_count*5/2)) - (stats.trim_mean(second_time,0.2)- 45*60)
+second_start = (t - int(iter_count*2.5)) - (stats.trim_mean(second_time,0.2)- 45*60)-5
 print("secondhalf_start: ",second_start)
 t = second_start + 45*60
 fail_count = 0
-while(fail_count < 4):
+while(fail_count < 30):
     target = t*fps
     state,board_time = num_detection(target)
     if(state == False):
         fail_count += 1
-    t += 5
-second_end = t - 17.5
+    if(state == True):
+        fail_count = 0
+    t += 2
+second_end = t - fail_count*2
 print("secondhalf_end: ",second_end)
 print("time :", time.time() - start)
 cap.release()

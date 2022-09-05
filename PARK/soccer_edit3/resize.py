@@ -8,7 +8,7 @@ try:
 except OSError:
     print('error : creating dir resize')
 
-for x in range(1500,6400):
+for x in range(6400,6800):
     for i in range(0,4):
         if(os.path.isfile('fill\%d_%d.jpg' %(x,i)) == False):
             continue
