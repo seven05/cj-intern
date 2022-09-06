@@ -4,19 +4,6 @@ import time
 import numpy as np
 from scipy import stats
 
-file_path = input("파일 이름을 입력해주세요: ")     #파일 받기
-start = time.time()                               #시간측정시작
-cap = cv2.VideoCapture("Video/"+file_path)
-if not cap.isOpened():                            #파일 유효성검사
-    print("Could not Open :", file_path)
-    exit(0)
-print("file ok")
-
-fps = cap.get(cv2.CAP_PROP_FPS)     
-fps = round(fps)
-frame = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-duration = frame/fps
-
 def histogram(img):                             #숫자인식에 쓰일 히스토그램 함수
     #print(filepath)                            #x,y축으로 숫자 픽셀 갯수 기록
     rows,cols = img.shape
@@ -38,6 +25,16 @@ def histogram(img):                             #숫자인식에 쓰일 히스�
     hist = np.concatenate((x_hist,y_hist))
     return hist
 
+#전광판에서 시간을 나타내는 숫자를 검출하기위한 상수값들
+MIN_AREA, MAX_AREA = 200,500
+MIN_WIDTH, MIN_HEIGHT = 0.5, 3
+MIN_RATIO, MAX_RATIO = 0.6, 0.9
+MAX_DIAG_MULTIPLYER = 3
+MAX_ANGLE_DIFF = 1.0
+MAX_AREA_DIFF = 0.2
+MAX_WIDTH_DIFF = 0.15
+MAX_HEIGHT_DIFF = 0.15
+MIN_N_MATCHED = 4
 # 숫자 0~9까지 표본
 hist_num0 = histogram(cv2.imread("number/0.jpg",cv2.IMREAD_GRAYSCALE))
 hist_num1 = histogram(cv2.imread("number/1.jpg",cv2.IMREAD_GRAYSCALE))
@@ -50,117 +47,106 @@ hist_num7 = histogram(cv2.imread("number/7.jpg",cv2.IMREAD_GRAYSCALE))
 hist_num8 = histogram(cv2.imread("number/8.jpg",cv2.IMREAD_GRAYSCALE))
 hist_num9 = histogram(cv2.imread("number/9.jpg",cv2.IMREAD_GRAYSCALE))
 
-#전광판에서 시간을 나타내는 숫자를 검출하기위한 상수값들
-MIN_AREA, MAX_AREA = 200,500
-MIN_WIDTH, MIN_HEIGHT = 0.5, 3
-MIN_RATIO, MAX_RATIO = 0.6, 0.9
-MAX_DIAG_MULTIPLYER = 3
-MAX_ANGLE_DIFF = 1.0
-MAX_AREA_DIFF = 0.2
-MAX_WIDTH_DIFF = 0.15
-MAX_HEIGHT_DIFF = 0.15
-MIN_N_MATCHED = 4
-
 #cv2함수인 contour로 찾아낸 경계선중에 내가 원하는 숫자모양만 걸러내기 
 def find_chars(contour_list):
-        matched_result_idx = []
-        for d1 in contour_list:
-            matched_contours_idx = []
-            for d2 in contour_list:
-                if d1['idx'] == d2['idx']:
-                    continue
-                    
-                dx = abs(d1['cx'] - d2['cx'])
-                dy = abs(d1['cy'] - d2['cy'])
-                
-                diagonal_length1 = np.sqrt(d1['w'] ** 2 + d1['h'] ** 2)
-                
-                distance = np.linalg.norm(np.array([d1['cx'], d1['cy']]) - np.array([d2['cx'], d2['cy']]))
-                if dx == 0:
-                    angle_diff = 90
-                else:
-                    angle_diff = np.degrees(np.arctan(dy / dx))
-                area_diff = abs(d1['w'] * d1['h'] - d2['w'] * d2['h']) / (d1['w'] * d1['h'])
-                width_diff = abs(d1['w'] - d2['w']) / d1['w']
-                height_diff = abs(d1['h'] - d2['h']) / d1['h']
-                # 숫자끼리는 비슷해야하므로 각도나 너비 높이가 비슷해야함
-                if distance < diagonal_length1 * MAX_DIAG_MULTIPLYER \
-                and angle_diff < MAX_ANGLE_DIFF and area_diff < MAX_AREA_DIFF \
-                and width_diff < MAX_WIDTH_DIFF and height_diff < MAX_HEIGHT_DIFF:
-                    matched_contours_idx.append(d2['idx'])
-                    
-            matched_contours_idx.append(d1['idx'])
-            #숫자 4개가 뭉쳐있어야함
-            if len(matched_contours_idx) < MIN_N_MATCHED:
+    matched_result_idx = []
+    for d1 in contour_list:
+        matched_contours_idx = []
+        for d2 in contour_list:
+            if d1['idx'] == d2['idx']:
                 continue
                 
-            matched_result_idx.append(matched_contours_idx)
+            dx = abs(d1['cx'] - d2['cx'])
+            dy = abs(d1['cy'] - d2['cy'])
             
-            unmatched_contour_idx = []
-            for d4 in contour_list:
-                if d4['idx'] not in matched_contours_idx:
-                    unmatched_contour_idx.append(d4['idx'])
+            diagonal_length1 = np.sqrt(d1['w'] ** 2 + d1['h'] ** 2)
             
-            unmatched_contour = np.take(possible_contours, unmatched_contour_idx)
-            
-            recursive_contour_list = find_chars(unmatched_contour)
-            
-            for idx in recursive_contour_list:
-                matched_result_idx.append(idx)
+            distance = np.linalg.norm(np.array([d1['cx'], d1['cy']]) - np.array([d2['cx'], d2['cy']]))
+            if dx == 0:
+                angle_diff = 90
+            else:
+                angle_diff = np.degrees(np.arctan(dy / dx))
+            area_diff = abs(d1['w'] * d1['h'] - d2['w'] * d2['h']) / (d1['w'] * d1['h'])
+            width_diff = abs(d1['w'] - d2['w']) / d1['w']
+            height_diff = abs(d1['h'] - d2['h']) / d1['h']
+            # 숫자끼리는 비슷해야하므로 각도나 너비 높이가 비슷해야함
+            if distance < diagonal_length1 * MAX_DIAG_MULTIPLYER \
+            and angle_diff < MAX_ANGLE_DIFF and area_diff < MAX_AREA_DIFF \
+            and width_diff < MAX_WIDTH_DIFF and height_diff < MAX_HEIGHT_DIFF:
+                matched_contours_idx.append(d2['idx'])
                 
-            break
+        matched_contours_idx.append(d1['idx'])
+        #숫자 4개가 뭉쳐있어야함
+        if len(matched_contours_idx) < MIN_N_MATCHED:
+            continue
             
-        return matched_result_idx
+        matched_result_idx.append(matched_contours_idx)
+        
+        unmatched_contour_idx = []
+        for d4 in contour_list:
+            if d4['idx'] not in matched_contours_idx:
+                unmatched_contour_idx.append(d4['idx'])
+        
+        unmatched_contour = np.take(possible_contours, unmatched_contour_idx)
+        
+        recursive_contour_list = find_chars(unmatched_contour)
+        
+        for idx in recursive_contour_list:
+            matched_result_idx.append(idx)
+            
+        break
+        
+    return matched_result_idx
 
 #resize하기전에 숫자영역의 여백이 히스토그램 오차를 내는것을 막기위해 여백을 자름
 def edge_cut(img):
-        status = 0
-        x_min,y_min,x_max,y_max = 0,0,0,0
-        cols, rows = img.shape
-        for x in range(0,rows):
-            for y in range(0,cols):
-                if (img[y][x] == 255):
-                    x_min = x
-                    status = 1
-                    break
-            if (status == 1):
-                break
-        status = 0
-
-        for y in reversed(range(cols)):
-            for x in reversed(range(rows)):
-                if (img[y][x] == 255):
-                    x_max = x
-                    y_max = y
-                    status = 1
-                    break
-            if (status == 1):
-                break
-        status = 0
-
+    status = 0
+    x_min,y_min,x_max,y_max = 0,0,0,0
+    cols, rows = img.shape
+    for x in range(0,rows):
         for y in range(0,cols):
-            for x in range(0,rows):
-                if (img[y][x] == 255):
-                    y_min = y
-                    status = 1
-                    break
-            if (status == 1):
+            if (img[y][x] == 255):
+                x_min = x
+                status = 1
                 break
-        status = 0
+        if (status == 1):
+            break
+    status = 0
 
+    for y in reversed(range(cols)):
         for x in reversed(range(rows)):
-            for y in reversed(range(cols)):
-                if (img[y][x] == 255):
-                    if (y >= y_max):
-                        y_max = y
-                    if (x >= x_max):
-                        x_max = x
-                    status = 1
-                    break
-            if (status == 1):
+            if (img[y][x] == 255):
+                x_max = x
+                y_max = y
+                status = 1
                 break
-        status = 0
-        return x_min,y_min,x_max,y_max
+        if (status == 1):
+            break
+    status = 0
+
+    for y in range(0,cols):
+        for x in range(0,rows):
+            if (img[y][x] == 255):
+                y_min = y
+                status = 1
+                break
+        if (status == 1):
+            break
+    status = 0
+
+    for x in reversed(range(rows)):
+        for y in reversed(range(cols)):
+            if (img[y][x] == 255):
+                if (y >= y_max):
+                    y_max = y
+                if (x >= x_max):
+                    x_max = x
+                status = 1
+                break
+        if (status == 1):
+            break
+    status = 0
+    return x_min,y_min,x_max,y_max
 
 #원하는 시간을 넣으면 숫자인식을 진행하는 함수
 def num_detection(target):
@@ -274,6 +260,7 @@ def num_detection(target):
     hist_gap2 = []
     hist_gap3 = []
     hist_gap4 = []
+    
     for i in range(0,10):   #10의자리 분, 1의자리 분, 1의자리 초 는 0~9가 모두 나오므로 10번
         temp1 = [abs(globals()[f'hist_num{i}'][j] - min1_hist[j]) for j in range(len(min1_hist))]
         temp2 = [abs(globals()[f'hist_num{i}'][j] - min2_hist[j]) for j in range(len(min2_hist))]
@@ -320,54 +307,64 @@ def num_detection(target):
     board_num = []
     return state, time
 
-t = 1500    #영상시작 1500초로 점프
-time_count = 0
-first_time = []
-while(time_count < 5):  #시작지점을 찾을때는 유효한 전광판 숫자 5개가 들어올때까지 탐색
-    target = t*fps
-    state,board_time = num_detection(target)
-    if(state == True):
-        time_count += 1
-        first_time.append(t-board_time)
-    t += 5              # 5초씩 건너뛰면서 탐색
-first_start = stats.trim_mean(first_time,0.25) # 숫자인식 오류를 생각해서 절사평균으로 튀는값 제거
-print("Firsthalf_start: ",first_start)
-t = first_start + 45*60 #시작시간 + 45분뒤로 점프
-fail_count = 0
-while(fail_count < 30):     #추가시간은 언제 끝날지 모르므로 숫자인식이 안되는 지점을 찾기위해 숫자인식 실패가 30회연속이면 끝지점 측정
-    target = t*fps
-    state,board_time = num_detection(target)
-    if(state == False):
-        fail_count += 1
-    if(state == True):
-        fail_count = 0
-    t += 2
-first_end = t - fail_count*2
-print("Firsthalf_end: ", first_end)
-t = first_end + 10*60
-time_count = 0
-second_time = []
-while(time_count < 5):
-    target = t*fps
-    state,board_time = num_detection(target)
-    if(state == True):
-        time_count += 1
-        second_time.append(t-(board_time-45*60))
-    t += 5
-second_start = stats.trim_mean(second_time,0.2)
-print("secondhalf_start: ",second_start)
-t = second_start + 45*60
-fail_count = 0
-while(fail_count < 30):
-    target = t*fps
-    state,board_time = num_detection(target)
-    if(state == False):
-        fail_count += 1
-    if(state == True):
-        fail_count = 0
-    t += 2
-second_end = t - fail_count*2
-print("secondhalf_end: ",second_end)
-print("time :", time.time() - start)
-cap.release()
-exit()
+def main(file_path):
+    #start = time.time()
+    global cap                              
+    cap = cv2.VideoCapture("Video/"+file_path)
+    if not cap.isOpened():                            #파일 유효성검사
+        print("Could not Open :", file_path)
+        exit(0)
+    print("file ok")
+    fps = cap.get(cv2.CAP_PROP_FPS)     
+    fps = round(fps)
+    t = 1500    #영상시작 1500초로 점프
+    time_count = 0
+    first_time = []
+    while(time_count < 5):  #시작지점을 찾을때는 유효한 전광판 숫자 5개가 들어올때까지 탐색
+        target = t*fps
+        state,board_time = num_detection(target)
+        if(state == True):
+            time_count += 1
+            first_time.append(t-board_time)
+        t += 5              # 5초씩 건너뛰면서 탐색
+    first_start = stats.trim_mean(first_time,0.25) # 숫자인식 오류를 생각해서 절사평균으로 튀는값 제거
+    #print("Firsthalf_start: ",first_start)
+    t = first_start + 45*60 #시작시간 + 45분뒤로 점프
+    fail_count = 0
+    while(fail_count < 30):     #추가시간은 언제 끝날지 모르므로 숫자인식이 안되는 지점을 찾기위해 숫자인식 실패가 30회연속이면 끝지점 측정
+        target = t*fps
+        state,board_time = num_detection(target)
+        if(state == False):
+            fail_count += 1
+        if(state == True):
+            fail_count = 0
+        t += 2
+    first_end = t - fail_count*2
+    #print("Firsthalf_end: ", first_end)
+    t = first_end + 10*60
+    time_count = 0
+    second_time = []
+    while(time_count < 5):
+        target = t*fps
+        state,board_time = num_detection(target)
+        if(state == True):
+            time_count += 1
+            second_time.append(t-(board_time-45*60))
+        t += 5
+    second_start = stats.trim_mean(second_time,0.2)
+    #print("secondhalf_start: ",second_start)
+    t = second_start + 45*60
+    fail_count = 0
+    while(fail_count < 30):
+        target = t*fps
+        state,board_time = num_detection(target)
+        if(state == False):
+            fail_count += 1
+        if(state == True):
+            fail_count = 0
+        t += 2
+    second_end = t - fail_count*2
+    #print("secondhalf_end: ",second_end)
+    #print("time :", time.time() - start)
+    cap.release()
+    return round(first_start), round(first_end),round(second_start),round(second_end)
