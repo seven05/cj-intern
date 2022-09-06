@@ -340,6 +340,8 @@ def main(file_path):
             fail_count = 0
         t += 2
     first_end = t - fail_count*2
+    if(first_end - first_start > 3060):
+        first_end = first_start + 3000
     #print("Firsthalf_end: ", first_end)
     t = first_end + 10*60
     time_count = 0
@@ -364,6 +366,8 @@ def main(file_path):
             fail_count = 0
         t += 2
     second_end = t - fail_count*2
+    if(second_end - second_start > 3060):
+        second_end = second_start + 3060
     #print("secondhalf_end: ",second_end)
     #print("time :", time.time() - start)
     cap.release()
