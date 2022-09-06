@@ -4,7 +4,7 @@ import json
 import pandas as pd
 from pandas import json_normalize
 
-# 5는 제외
+# 황교훈님 코드 잘 빌렸습니다 ㅎㅎ 
 for_for_loop= ["001", "005", "030","040","050","060","070","080","090","100","110","120","130","140","150"]
 
 
