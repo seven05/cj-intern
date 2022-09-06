@@ -1,0 +1,32 @@
+{
+    "annotations": [
+        {
+            "gameTime": "1 - 11:16",
+            "label": "Start of game",
+            "position": "792866",
+            "team": "home",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 58:16",
+            "label": "End of game",
+            "position": "3556139",
+            "team": "not applicable",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 63:41",
+            "label": "Start of game",
+            "position": "3790202",
+            "team": "home",
+            "visibility": "visible"
+        },
+        {
+            "gameTime": "1 - 113:20",
+            "label": "End of game",
+            "position": "6787357",
+            "team": "not applicable",
+            "visibility": "visible"
+        }
+    ]
+}

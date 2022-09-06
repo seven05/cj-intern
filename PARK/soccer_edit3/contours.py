@@ -1,5 +1,4 @@
 import os
-from platform import win32_edition
 import cv2
 import time
 import numpy as np
@@ -15,13 +14,13 @@ MAX_HEIGHT_DIFF = 0.15
 MIN_N_MATCHED = 4
 
 try:
-    if not os.path.exists('./number'):
-        os.makedirs('./number')
+    if not os.path.exists('./contours'):
+        os.makedirs('./contours')
 except OSError:
-    print('error : creating dir number')
+    print('error : creating dir contours')
 
 file_path = input("파일 이름을 입력해주세요: ")
-cap = cv2.VideoCapture(file_path)
+cap = cv2.VideoCapture("Video/"+file_path)
 if not cap.isOpened():
     print("Could not Open :", file_path)
     exit(0)
@@ -83,7 +82,7 @@ def find_chars(contour_list):
             
         return matched_result_idx
 
-for t in range(1500,6400):
+for t in range(6400,6800):
     target = t*fps
     cap.set(cv2.CAP_PROP_POS_FRAMES,target)
     ret, img = cap.read()
@@ -204,7 +203,7 @@ for t in range(1500,6400):
     # print(len(number_list))
     # print(matched_result)
 
-    if(len(number_list) != 4):
+    if(len(number_list) < 4):
         continue
     
     number_list.sort(key=lambda x:x[0])
@@ -215,4 +214,4 @@ for t in range(1500,6400):
         y = number_list[i][1]
         w = number_list[i][2]
         h = number_list[i][3]
-        cv2.imwrite('./number' + "/%d_num_%d.jpg" %(t,i), img_crop[y:y+h,x:x+w])
+        cv2.imwrite('./contours' + "/%d_num_%d.jpg" %(t,i), img_crop[y:y+h,x:x+w])
