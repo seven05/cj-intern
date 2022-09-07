@@ -1,3 +1,4 @@
+from sre_constants import SUCCESS
 import cv2
 import os
 import time
@@ -319,55 +320,83 @@ def main(file_path):
     fps = round(fps)
     t = 1500    #영상시작 1500초로 점프
     time_count = 0
-    first_time = []
+    first_start_time = []
     while(time_count < 5):  #시작지점을 찾을때는 유효한 전광판 숫자 5개가 들어올때까지 탐색
         target = t*fps
         state,board_time = num_detection(target)
         if(state == True):
             time_count += 1
-            first_time.append(t-board_time)
+            first_start_time.append(t-board_time)
         t += 5              # 5초씩 건너뛰면서 탐색
-    first_start = stats.trim_mean(first_time,0.25) # 숫자인식 오류를 생각해서 절사평균으로 튀는값 제거
+    first_start = stats.trim_mean(first_start_time,0.25) # 숫자인식 오류를 생각해서 절사평균으로 튀는값 제거
     #print("Firsthalf_start: ",first_start)
     t = first_start + 45*60 #시작시간 + 45분뒤로 점프
     fail_count = 0
+    #success_count = 0
+    first_end_time = []
     while(fail_count < 30):     #추가시간은 언제 끝날지 모르므로 숫자인식이 안되는 지점을 찾기위해 숫자인식 실패가 30회연속이면 끝지점 측정
         target = t*fps
         state,board_time = num_detection(target)
         if(state == False):
             fail_count += 1
         if(state == True):
+            # if(2600 < board_time < 3100):
+            #     fail_count = 0
+            # else:
+            #     fail_count +=1
             fail_count = 0
+            if(2600 < board_time < 3100):
+                first_end_time.append(board_time)
         t += 2
     first_end = t - fail_count*2
-    if(first_end - first_start > 3060):
-        first_end = first_start + 3000
+    if(len(first_end_time) == 0):
+        first_end = first_end
+    else:    
+        first_end_time_max = max(first_end_time)
+        if(abs(first_end - (first_start + first_end_time_max)) > 120):
+            first_end = (first_end + (first_start + first_end_time_max))/2
+    # if(first_end - first_start > 3060):
+    #     first_end = first_start + 3000
     #print("Firsthalf_end: ", first_end)
     t = first_end + 10*60
     time_count = 0
-    second_time = []
+    second_start_time = []
     while(time_count < 5):
         target = t*fps
         state,board_time = num_detection(target)
         if(state == True):
             time_count += 1
-            second_time.append(t-(board_time-45*60))
+            second_start_time.append(t-(board_time-45*60))
         t += 5
-    second_start = stats.trim_mean(second_time,0.2)
+    second_start = stats.trim_mean(second_start_time,0.2)
     #print("secondhalf_start: ",second_start)
     t = second_start + 45*60
     fail_count = 0
+    #success_count = 0
+    second_end_time = []
     while(fail_count < 30):
         target = t*fps
         state,board_time = num_detection(target)
         if(state == False):
             fail_count += 1
         if(state == True):
+            # if(5300 < board_time < 5800):
+            #     fail_count = 0
+            # else:
+            #     fail_count +=1
             fail_count = 0
+            if(5300 < board_time < 5800):
+                second_end_time.append(board_time)
         t += 2
     second_end = t - fail_count*2
-    if(second_end - second_start > 3060):
-        second_end = second_start + 3060
+    if(len(second_end_time) == 0):
+        second_end = second_end
+    else:
+        second_end_time_max = max(second_end_time)
+        if(abs(second_end - (second_start + second_end_time_max - 45*60)) > 120):
+            second_end = (second_end + (second_start + second_end_time_max - 45*60))/2
+    # if(second_end - second_start > 3060):
+    #     second_end = second_start + 3060
     #print("secondhalf_end: ",second_end)
     #print("time :", time.time() - start)
     cap.release()
