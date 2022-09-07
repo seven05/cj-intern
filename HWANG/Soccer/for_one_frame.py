@@ -3,7 +3,7 @@ import cv2
 import os
 import time
 # 8-25.py 파일을 한 프레임 당으로 진행 과정을 설명하기 위한 코드
-
+# test
 file_name = "frame/6.jpg"
 
 # img를 받아 RGB를 이용한 색 추출(하얀색 배경을 제외하면 검은색으로 표시)
