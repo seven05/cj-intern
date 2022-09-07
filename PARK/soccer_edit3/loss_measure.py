@@ -60,5 +60,5 @@ for i in for_for_loop:
     df_predict.loc[count] = [file_name, a, b, c, d, end-start]
     count += 1
 
-df_diff.to_csv("result.csv", mode= "w")
-df_predict.to_csv("predict.csv", mode="w")
+df_diff.to_csv("result1.csv", mode= "w")
+df_predict.to_csv("predict1.csv", mode="w")
