@@ -8,6 +8,10 @@
 일시 중단
 
 ---
-# TASK3 - SOCCER DIRECTORY
+# TASK3
 ### 축구 영상 전, 후반 분리 
-진행 중
+### 완료
+
+#TASK4
+### confusion matrix v2
+label별로 precision thre에 따른 그래프
