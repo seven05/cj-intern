@@ -345,16 +345,21 @@ def main(file_path):
             # else:
             #     fail_count +=1
             fail_count = 0
-            if(2600 < board_time < 3100):
+            if(2700 < board_time < 3100):
                 first_end_time.append(board_time)
         t += 2
     first_end = t - fail_count*2
     if(len(first_end_time) == 0):
         first_end = first_end
+        if((first_end - (first_start+45*60)) > 400):
+            first_end = first_start + 48*60
     else:    
         first_end_time_max = max(first_end_time)
-        if(abs(first_end - (first_start + first_end_time_max)) > 120):
-            first_end = (first_end + (first_start + first_end_time_max))/2
+        if((first_end - (first_start+45*60)) > 400):
+            first_end = first_start + first_end_time_max
+        else:
+            if(abs(first_end - (first_start + first_end_time_max)) < 30):
+                first_end = (first_end + (first_start + first_end_time_max))/2
     # if(first_end - first_start > 3060):
     #     first_end = first_start + 3000
     #print("Firsthalf_end: ", first_end)
@@ -385,16 +390,21 @@ def main(file_path):
             # else:
             #     fail_count +=1
             fail_count = 0
-            if(5300 < board_time < 5800):
+            if(5400 < board_time < 5800):
                 second_end_time.append(board_time)
         t += 2
-    second_end = t - fail_count*2
+    second_end = t - fail_count*2   
     if(len(second_end_time) == 0):
         second_end = second_end
+        if((second_end - (second_start+45*60)) > 400):
+            second_end = second_start + 48*60
     else:
         second_end_time_max = max(second_end_time)
-        if(abs(second_end - (second_start + second_end_time_max - 45*60)) > 120):
-            second_end = (second_end + (second_start + second_end_time_max - 45*60))/2
+        if((second_end - (second_start+45*60)) > 400):
+            second_end = second_start + second_end_time_max
+        else:
+            if(abs(second_end - (second_start + second_end_time_max - 45*60)) < 30):
+                second_end = (second_end + (second_start + second_end_time_max - 45*60))/2
     # if(second_end - second_start > 3060):
     #     second_end = second_start + 3060
     #print("secondhalf_end: ",second_end)
