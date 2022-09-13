@@ -82,7 +82,7 @@ def find_chars(contour_list):
             
         return matched_result_idx
 
-for t in range(6400,6800):
+for t in range(2000,2001):
     target = t*fps
     cap.set(cv2.CAP_PROP_POS_FRAMES,target)
     ret, img = cap.read()
@@ -98,7 +98,6 @@ for t in range(6400,6800):
     # cv2.destroyAllWindows()
     
     img_gray = cv2.cvtColor(img_crop, cv2.COLOR_BGR2GRAY)
-    '''
     img_gray_thr = cv2.adaptiveThreshold(
         img_gray,
         maxValue=255,
@@ -110,7 +109,7 @@ for t in range(6400,6800):
     # cv2.imshow("img",img_gray_thr)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    '''
+    
     img_blur = cv2.GaussianBlur(img_gray, ksize=(9,9), sigmaX=0)
     img_blur_thr = cv2.adaptiveThreshold(
         img_blur,

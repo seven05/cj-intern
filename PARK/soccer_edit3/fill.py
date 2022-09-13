@@ -57,7 +57,7 @@ def edge_cut(img):
         status = 0
         return x_min,y_min,x_max,y_max
 
-for n in range(6400,6800):
+for n in range(2000,2001):
     for i in range(0,4):
         if(os.path.isfile("contours/%d_num_%d.jpg" %(n,i)) == False):
             continue
@@ -70,7 +70,7 @@ for n in range(6400,6800):
 
         # for j in range(0,w):
         #     print(img_thr[2][j])
-
+        #cv2.imwrite('fill/%d_%d_thr.jpg' %(n,i), img_thr)
         x_min,y_min,x_max,y_max = edge_cut(img_thr)
         #print(x_min,y_min,x_max,y_max)
 
