@@ -345,21 +345,21 @@ def main(file_path):
             # else:
             #     fail_count +=1
             fail_count = 0
-            if(2700 < board_time < 3100):
+            if(2700 < board_time < 3100):       # 인식된 시간이 유효한 시간이라면
                 first_end_time.append(board_time)
         t += 2
-    first_end = t - fail_count*2
-    if(len(first_end_time) == 0):
-        first_end = first_end
-        if((first_end - (first_start+45*60)) > 400):
-            first_end = first_start + 48*60
+    first_end = t - fail_count*2        
+    if(len(first_end_time) == 0):       #기록된 전광판 시간이없으면 인식 실패로 찾은 시간 그대로 사용
+        first_end = first_end           
+        if((first_end - (first_start+45*60)) > 400):    #다만 찾은 시간이 시작지점과 너무 차이나면
+            first_end = first_start + 48*60     #끝지점을 시작 지점으로 부터 48분이후로 수정
     else:    
-        first_end_time_max = max(first_end_time)
-        if((first_end - (first_start+45*60)) > 400):
-            first_end = first_start + first_end_time_max
+        first_end_time_max = max(first_end_time)    #기록된 전광판의 시간이 있다면
+        if((first_end - (first_start+45*60)) > 400):    #인식실패로 찾은 끝지점의 오차가 너무 클경우
+            first_end = first_start + first_end_time_max    #전광판 시간중 가장 큰 값을 시작지점에 더해서 끝지점 기록
         else:
-            if(abs(first_end - (first_start + first_end_time_max)) < 30):
-                first_end = (first_end + (first_start + first_end_time_max))/2
+            if(abs(first_end - (first_start + first_end_time_max)) < 30):   #인식실패로 찾은 시간과 전광판의 시간이 차이가 적다면
+                first_end = (first_end + (first_start + first_end_time_max))/2 #둘의 평균으로 끝지점을 기록한다.
     # if(first_end - first_start > 3060):
     #     first_end = first_start + 3000
     #print("Firsthalf_end: ", first_end)
