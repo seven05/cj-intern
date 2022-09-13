@@ -2,12 +2,12 @@ from distutils.log import error
 import cv2
 import os
 import time
-filepath = 'P470472958_EPI0150_01_t35.mp4'
+filepath = 'P470472958_EPI0001_01_t35.mp4'
 cap = cv2.VideoCapture(filepath)
 if not cap.isOpened():
     print("Could not Open :", filepath)
     exit(0)
-#cap.set(cv2.CAP_PROP_POS_FRAMES,20000)
+cap.set(cv2.CAP_PROP_POS_FRAMES,20000)
 #cap.set(cv2.CAP_PROP_POS_FRAMES,24000)
 #cap.set(cv2.CAP_PROP_POS_FRAMES,104760)
 #cap.set(cv2.CAP_PROP_POS_FRAMES,106700)
@@ -80,8 +80,8 @@ if not cap.isOpened():
     exit(0)
 '''
 try:
-    if not os.path.exists('./Captures2'):
-        os.makedirs('./Captures2')
+    if not os.path.exists('./Captures'):
+        os.makedirs('./Captures')
 except OSError:
     print('error : creating dir Captures2')
 
@@ -93,7 +93,8 @@ while(cap.get(cv2.CAP_PROP_POS_FRAMES) <= frame-100):
         #img = cv2.resize(img,dsize=(1280,720))
         img_crop = img[52:98,120:210]
         edges = cv2.Canny(img_crop, 100,600)
-        cv2.imwrite('./Captures2' + "/%d.jpg" %count, edges)
+        cv2.imwrite('./Captures' + "/%d.jpg" %count, edges)
+        #cv2.imwrite('./Captures' + "/%d.jpg" %count, img_crop)
         count +=1
 print("time :", time.time() - start)
 
