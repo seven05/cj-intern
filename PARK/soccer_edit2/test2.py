@@ -3,7 +3,7 @@ import cv2
 import os
 import time
 import numpy as np
-filepath = 'video\P470472958_EPI0002_01_t35.mp4'
+filepath = 'P470472958_EPI0001_01_t35.mp4'
 cap = cv2.VideoCapture(filepath)
 if not cap.isOpened():
     print("Could not Open :", filepath)
@@ -20,7 +20,7 @@ try:
 except OSError:
     print('error : creating dir test')
 
-for t in range(600,6000):
+for t in range(600,2000):
     for i in range(0,5):
         target = (t-4+i*2)*fps
         cap.set(cv2.CAP_PROP_POS_FRAMES,target)
@@ -42,7 +42,7 @@ for t in range(600,6000):
                             if(temp < 10):
                                 temp_img[i][j] = 255
     #print(temp_img)           
-    cv2.imwrite('./test' + "/test3_%d.jpg" %(t), temp_img)
+    cv2.imwrite('./test' + "/test_%d.jpg" %(t), temp_img)
 
 cap.release()
 exit()

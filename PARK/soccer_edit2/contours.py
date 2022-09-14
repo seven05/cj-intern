@@ -10,8 +10,8 @@ try:
 except OSError:
     print('error : creating dir contours')
 
-for t in range(600,6000):
-    img = cv2.imread('./test' + "/test3_%d.jpg" %t, 1)
+for t in range(600,2000):
+    img = cv2.imread('./test' + "/test_%d.jpg" %t, 1)
     img_gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     #contours, hierachy = cv2.findContours(img_gray, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     #img_con = cv2.drawContours(img, contours, -1, (255,0,0), 1)

@@ -25,25 +25,25 @@ for x in range(0,7000):
     count = 0
 '''
 try:
-    if not os.path.exists('./Crop2'):
-        os.makedirs('./Crop2')
+    if not os.path.exists('./Crop'):
+        os.makedirs('./Crop')
 except OSError:
     print('error : creating dir Crop2')
 
-for y in range(0,7000):
+for y in range(132,150):
     count = 1
     img = cv2.imread("Captures2/{}.jpg".format(y), 0)
     crop_1 = img[11:33,5:22]
-    cv2.imwrite('./Crop2' + "/%d_%d.jpg" %(y,count), crop_1)
+    cv2.imwrite('./Crop' + "/%d_%d.jpg" %(y,count), crop_1)
     count += 1
     crop_2 = img[11:33,23:40]
-    cv2.imwrite('./Crop2' + "/%d_%d.jpg" %(y,count), crop_2)
+    cv2.imwrite('./Crop' + "/%d_%d.jpg" %(y,count), crop_2)
     count += 1
     crop_3 = img[11:33,50:67] 
-    cv2.imwrite('./Crop2' + "/%d_%d.jpg" %(y,count), crop_3)
+    cv2.imwrite('./Crop' + "/%d_%d.jpg" %(y,count), crop_3)
     count += 1
     crop_4 = img[11:33,68:85]
-    cv2.imwrite('./Crop2' + "/%d_%d.jpg" %(y,count), crop_4)
+    cv2.imwrite('./Crop' + "/%d_%d.jpg" %(y,count), crop_4)
     count = 0
 
 '''

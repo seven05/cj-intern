@@ -2,7 +2,7 @@ from distutils.log import error
 import cv2
 import os
 import time
-filepath = 'video\P470472958_EPI0002_01_t35.mp4'
+filepath = 'P470472958_EPI0001_01_t35.mp4'
 cap = cv2.VideoCapture(filepath)
 if not cap.isOpened():
     print("Could not Open :", filepath)
@@ -34,7 +34,7 @@ while(cap.get(cv2.CAP_PROP_POS_FRAMES) <= frame-100):
         ret, img_thr = cv2.threshold(img_gray,127,255,cv2.THRESH_BINARY_INV)
         #cv2.imwrite('./Captures' + "/thresh_%d.jpg" %count, img_thr)
         contours, hierachy = cv2.findContours(img_thr, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        img_con = cv2.drawContours(img_crop, contours, -1, (255,0,0), 1)
+        img_con = cv2.drawContours(img_crop, contours, -1, (255,0,0), 2)
         cv2.imwrite('./Captures' + "/contours_%d.jpg" %count, img_con)
         count +=1
 print("time :", time.time() - start)
