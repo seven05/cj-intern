@@ -5,7 +5,7 @@
 ---
 # TASK2
 ### RPPG를 사용한 MTTS-CAN
-일시 중단
+### 중단
 
 ---
 # TASK3
@@ -17,3 +17,6 @@
 ### confusion matrix v2
 label별로 precision thre에 따른 그래프
 ### 완료
+
+# TASK5
+### UFC - face detection / recognition 
