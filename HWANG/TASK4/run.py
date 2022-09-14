@@ -1,4 +1,5 @@
-
+# Precision_Recall.py 파일에 input이 지정되어 있어, run.py 파일만 실행시킨다면 confidence thr에 따른
+# Recall - Precision graph를 받을 수 있습니다.
 
 import Precision_Recall
 import pandas as pd
