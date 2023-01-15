@@ -1,18 +1,3 @@
-import streamlit as st
-st.header("st.selectbox")
-
-CONFIDENCE = st.slider(
-    "Confidence score",
-    0, 100, 25
-)
-
-option = st.selectbox(
-    'Model weights',
-    ("face.pt", "player.pt")
-)
-
-
-video_file = open('../test_ufc.mp4', 'rb')
-video_bytes = video_file.read()
-
-st.video(video_bytes)
+version https://git-lfs.github.com/spec/v1
+oid sha256:97672948d54c4a609758c8f615f8f18b1b87207dc0fa6a8055cf1141cfe1dc9a
+size 290
